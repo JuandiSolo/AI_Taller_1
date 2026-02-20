@@ -2,6 +2,7 @@ from algorithms.problems import SearchProblem
 import algorithms.utils as utils
 from world.game import Directions
 from algorithms.heuristics import nullHeuristic
+from algorithms.utils import Stack, Queue, PriorityQueue
 
 
 def tinyHouseSearch(problem: SearchProblem):
@@ -37,7 +38,21 @@ def breadthFirstSearch(problem: SearchProblem):
     Search the shallowest nodes in the search tree first.
     """
     # TODO: Add your code here
-    utils.raiseNotDefined()
+    buttocks = Queue()
+    start = problem.getStartState()
+    buttocks.push((start, []))
+    visited = set()
+    while not buttocks.isEmpty():
+        state, path = buttocks.pop()
+        if problem.isGoalState(state):
+            return path
+        if state not in visited:
+            visited.add(state)
+            for successor, action, _ in problem.getSuccessors(state):
+                if successor not in visited:
+                    new_path = path + [action]
+                    buttocks.push((successor, new_path))
+    return []
 
 
 def uniformCostSearch(problem: SearchProblem):
