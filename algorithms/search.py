@@ -69,11 +69,53 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     Search the node that has the lowest combined cost and heuristic first.
     """
     # TODO: Add your code here
-    utils.raiseNotDefined()
+    coordenadaInicial = problem.getStartState()
+    
+    structure = {
+        "source": coordenadaInicial,
+        "visited": {},
+        "pq": utils.PriorityQueue()}
+    pesoStart = heuristic(coordenadaInicial,problem)
+    value = {"marked": True, "edge_to": None, "dist_to": pesoStart, "direction": None}
+    structure["visited"][coordenadaInicial] = value
+    structure["pq"].push(coordenadaInicial, pesoStart)
+    coordFinal = None
+    while coordFinal == None and structure["pq"].isEmpty() == False:
+        coordActual = structure["pq"].pop()
+        coordFinal = scanAStar(problem, structure, coordActual, coordFinal, heuristic)
+    listaInstrucciones = []
+    vertex_inicial = structure["visited"][coordFinal]
+    while vertex_inicial and vertex_inicial["direction"] != None:
+            listaInstrucciones.append(vertex_inicial["direction"])
+            vertex_inicial = structure["visited"][vertex_inicial["edge_to"]]
+    listaInstrucciones.reverse()
+    return listaInstrucciones
 
-
+def scanAStar(problem: SearchProblem, structure, coordActual, coordFinal, heuristic):
+    listaSucesoresInicial = problem.getSuccessors(coordActual)
+    for nodoHijoActual in listaSucesoresInicial:
+        coordenadaHijoActual, Dirección, PesoActual = nodoHijoActual
+        if problem.isGoalState(coordenadaHijoActual):
+            coordFinal = coordenadaHijoActual
+        pesoOrigen = structure["visited"][coordActual]["dist_to"]
+        pesoHeuristic = heuristic(coordenadaHijoActual, problem)
+        pesoPq = PesoActual+pesoOrigen
+        pesoTotal = pesoPq+pesoHeuristic
+        if structure["visited"].get(coordenadaHijoActual) == None:
+            value = {"marked": True, "edge_to": coordActual, "dist_to": pesoPq, "direction": Dirección}
+            structure["pq"].push(coordenadaHijoActual, pesoTotal)
+            structure["visited"][coordenadaHijoActual] = value
+        else:
+            distToActual = structure["visited"][coordenadaHijoActual]["dist_to"]
+            if distToActual > pesoTotal:
+                value = {"marked": True, "edge_to": coordActual, "dist_to": pesoPq, "direction": Dirección}
+                structure["visited"][coordenadaHijoActual]= value
+                structure["pq"].update(coordenadaHijoActual, pesoTotal)
+    return coordFinal
+ 
 # Abbreviations (you can use them for the -f option in main.py)
 bfs = breadthFirstSearch
 dfs = depthFirstSearch
 astar = aStarSearch
 ucs = uniformCostSearch
+# dijk = dijkstra
