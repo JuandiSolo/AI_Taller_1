@@ -62,8 +62,11 @@ class SearchAgent(Agent):
             raise Exception("No search function provided for SearchAgent")
 
         starttime = time.time()
-        problem = self.searchType(state)  # Create the search problem
+        problem = self.searchType(state)# Create the search problem
+        # x = 1
         self.actions = self.searchFunction(problem)  # Find path using search algorithm
+        # x = 0
+        # x = self.searchFunction(problem)
 
         if self.actions is None:
             self.actions = []
@@ -75,6 +78,8 @@ class SearchAgent(Agent):
         )
         if "_expanded" in dir(problem):
             print("Search nodes expanded: %d" % problem._expanded)
+        if "_visitedlist" in dir(problem):
+            print(f"Search nodes visited: {problem._visitedlist}")
 
     def getAction(self, state):
         """
