@@ -61,7 +61,27 @@ def uniformCostSearch(problem: SearchProblem):
     """
 
     # TODO: Add your code here
-    utils.raiseNotDefined()
+    inicial = problem.getStartState()
+    visitados = set()
+    costos = {inicial:0}
+    caminos = {inicial:[]}
+    pq = utils.PriorityQueue()
+    pq.push(inicial, 0)
+    while pq.isEmpty() == False:
+        nodoActual= pq.pop()
+        if nodoActual in visitados:
+            continue
+        costo1 = costos[nodoActual] 
+        if problem.isGoalState(nodoActual):
+            return caminos[nodoActual]
+        lista = problem.getSuccessors(nodoActual)
+        for nodo, accion, costo2 in lista:
+            nuevoCosto = costo1 + costo2
+            if nodo not in costos or costos[nodo] > nuevoCosto:
+                pq.push(nodo, nuevoCosto)
+                costos[nodo] = nuevoCosto
+                caminos [nodo] = caminos[nodoActual] + [accion]
+    return []
 
 
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
