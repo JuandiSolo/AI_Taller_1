@@ -29,8 +29,25 @@ def depthFirstSearch(problem: SearchProblem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
-    # TODO: Add your code here
-    utils.raiseNotDefined()
+    stack = Stack()
+    start = problem.getStartState()
+    stack.push((start, []))
+    visited = set()
+
+    while not stack.isEmpty():
+        state, path = stack.pop()
+
+        if problem.isGoalState(state):
+            return path
+
+        if state not in visited:
+            visited.add(state)
+            for successor, action, _ in problem.getSuccessors(state):
+                if successor not in visited:
+                    new_path = path + [action]
+                    stack.push((successor, new_path))
+
+    return []
 
 
 def breadthFirstSearch(problem: SearchProblem):
@@ -90,12 +107,13 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """
     # TODO: Add your code here
     coordenadaInicial = problem.getStartState()
-    
+
     structure = {
         "source": coordenadaInicial,
         "visited": {},
-        "pq": utils.PriorityQueue()}
-    pesoStart = heuristic(coordenadaInicial,problem)
+        "pq": utils.PriorityQueue(),
+    }
+    pesoStart = heuristic(coordenadaInicial, problem)
     value = {"marked": True, "edge_to": None, "dist_to": pesoStart, "direction": None}
     structure["visited"][coordenadaInicial] = value
     structure["pq"].push(coordenadaInicial, pesoStart)
@@ -106,10 +124,11 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     listaInstrucciones = []
     vertex_inicial = structure["visited"][coordFinal]
     while vertex_inicial and vertex_inicial["direction"] != None:
-            listaInstrucciones.append(vertex_inicial["direction"])
-            vertex_inicial = structure["visited"][vertex_inicial["edge_to"]]
+        listaInstrucciones.append(vertex_inicial["direction"])
+        vertex_inicial = structure["visited"][vertex_inicial["edge_to"]]
     listaInstrucciones.reverse()
     return listaInstrucciones
+
 
 def scanAStar(problem: SearchProblem, structure, coordActual, coordFinal, heuristic):
     listaSucesoresInicial = problem.getSuccessors(coordActual)
@@ -119,20 +138,31 @@ def scanAStar(problem: SearchProblem, structure, coordActual, coordFinal, heuris
             coordFinal = coordenadaHijoActual
         pesoOrigen = structure["visited"][coordActual]["dist_to"]
         pesoHeuristic = heuristic(coordenadaHijoActual, problem)
-        pesoPq = PesoActual+pesoOrigen
-        pesoTotal = pesoPq+pesoHeuristic
+        pesoPq = PesoActual + pesoOrigen
+        pesoTotal = pesoPq + pesoHeuristic
         if structure["visited"].get(coordenadaHijoActual) == None:
-            value = {"marked": True, "edge_to": coordActual, "dist_to": pesoPq, "direction": Dirección}
+            value = {
+                "marked": True,
+                "edge_to": coordActual,
+                "dist_to": pesoPq,
+                "direction": Dirección,
+            }
             structure["pq"].push(coordenadaHijoActual, pesoTotal)
             structure["visited"][coordenadaHijoActual] = value
         else:
             distToActual = structure["visited"][coordenadaHijoActual]["dist_to"]
             if distToActual > pesoTotal:
-                value = {"marked": True, "edge_to": coordActual, "dist_to": pesoPq, "direction": Dirección}
-                structure["visited"][coordenadaHijoActual]= value
+                value = {
+                    "marked": True,
+                    "edge_to": coordActual,
+                    "dist_to": pesoPq,
+                    "direction": Dirección,
+                }
+                structure["visited"][coordenadaHijoActual] = value
                 structure["pq"].update(coordenadaHijoActual, pesoTotal)
     return coordFinal
- 
+
+
 # Abbreviations (you can use them for the -f option in main.py)
 bfs = breadthFirstSearch
 dfs = depthFirstSearch
