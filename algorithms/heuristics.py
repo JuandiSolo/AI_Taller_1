@@ -54,4 +54,19 @@ def survivorHeuristic(state: Tuple[Tuple, Any], problem: MultiSurvivorProblem):
     - Balance heuristic strength vs. computation time (do experiments!)
     """
     # TODO: Add your code here
-    utils.raiseNotDefined()
+    position, survivors_grid = state
+    survivors = survivors_grid.asList()
+
+    if len(survivors) == 0:
+        return 0
+    
+    survivors_key = tuple(sorted(survivors))
+    if "mst" not in problem.heuristicInfo:
+        problem.heuristicInfo["mst"] = {}
+
+    if survivors_key not in problem.heuristicInfo["mst"]:
+        problem.heuristicInfo["mst"][survivors_key] = utils.computeMST(survivors)
+
+    mst_cost = problem.heuristicInfo["mst"][survivors_key]
+    nearest_distance = min(utils.manhattanDistance(position, s) for s in survivors)
+    return nearest_distance + mst_cost

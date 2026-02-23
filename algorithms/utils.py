@@ -358,3 +358,34 @@ def nearestPoint(pos):
     grid_row = int(current_row + 0.5)
     grid_col = int(current_col + 0.5)
     return (grid_row, grid_col)
+
+def manhattanDistance(p1, p2):
+    return abs(p1[0] - p2[0]) + abs(p1[1] - p2[1])
+
+
+def computeMST(points):
+    if len(points) <= 1:
+        return 0
+
+    points = list(points)
+    visited = set()
+    total_cost = 0
+
+    visited.add(points[0])
+
+    while len(visited) < len(points):
+        min_edge = float("inf")
+        next_point = None
+
+        for v in visited:
+            for p in points:
+                if p not in visited:
+                    cost = manhattanDistance(v, p)
+                    if cost < min_edge:
+                        min_edge = cost
+                        next_point = p
+
+        visited.add(next_point)
+        total_cost += min_edge
+
+    return total_cost
