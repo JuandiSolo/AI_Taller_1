@@ -114,7 +114,7 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
         "pq": utils.PriorityQueue(),
     }
     pesoStart = heuristic(coordenadaInicial, problem)
-    value = {"marked": True, "edge_to": None, "dist_to": pesoStart, "direction": None}
+    value = {"marked": True, "edge_to": None, "dist_to": 0, "direction": None}
     structure["visited"][coordenadaInicial] = value
     structure["pq"].push(coordenadaInicial, pesoStart)
     coordFinal = None
